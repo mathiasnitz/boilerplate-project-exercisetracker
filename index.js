@@ -138,10 +138,11 @@ app.get("/api/users", (req,res) =>{
   const userArray = [];
   for (let i = 0; i < users.length; i++) {
     userArray.push({
-      username: users[i].name,
-      _id: users[i]._id
+      "username": users[i].name,
+      "_id": users[i]._id
     });
   }
+  console.log(userArray);
   res.json(userArray);
 
 });
