@@ -4,10 +4,15 @@ const cors = require('cors');
 const req = require('express/lib/request');
 require('dotenv').config()
 
-//counter, arrays
+//counter, arrays, beispieldaten
 let userIdCounter = 1;
-let users = [];
 let exercises = [];
+
+let users = [
+  { _id: 1, name: "Alice" },
+  { _id: 2, name: "Bob" },
+  { _id: 3, name: "Charlie" }
+];
 
 app.use(cors())
 app.use(express.static('public'))
