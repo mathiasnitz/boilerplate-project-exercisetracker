@@ -30,7 +30,7 @@ app.post("/api/users", (req,res) => {
 
   users.push(newUser);
 
-  res.json({ "name": newUser.name, "_id": newUser._id });
+  res.json({ "username": newUser.name, "_id": newUser._id });
 });
 
 // userspezifische übung anlegen, hinzufügen
