@@ -125,13 +125,17 @@ app.get("/api/users/:_id", (req,res) =>{
 
 // alle user anzeigen
 app.get("/api/users", (req,res) =>{
-  
-  const userList = users.map(user => ({
+
+  if(users.length <= 0){
+    res.status(404).json({ error: "User not found" });
+  }
+
+  const response = users.map(user => ({
     username: user.name,
     _id: user._id
-  }));
-  
-  res.json(userList);
+  }))
+
+  res.json(response);
 
 });
 
