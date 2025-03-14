@@ -135,12 +135,14 @@ app.get("/api/users", (req,res) =>{
     res.status(404).json({ error: "User not found" });
   }
 
-  const response = users.map(user => ({
-    username: user.name,
-    _id: user._id
-  }))
-
-  res.json(response);
+  const userArray = [];
+  for (let i = 0; i < users.length; i++) {
+    userArray.push({
+      username: users[i].name,
+      _id: users[i]._id
+    });
+  }
+  res.json(userArray);
 
 });
 
