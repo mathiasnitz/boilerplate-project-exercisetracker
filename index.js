@@ -5,7 +5,7 @@ const req = require('express/lib/request');
 require('dotenv').config()
 
 //counter, arrays, beispieldaten
-let userIdCounter = 1;
+let userIdCounter;
 let exercises = [];
 
 let users = [
@@ -13,6 +13,10 @@ let users = [
   { _id: 2, name: "Bob" },
   { _id: 3, name: "Charlie" }
 ];
+
+function setUserId(){
+  return userIdCounter = users.length + 1;
+}
 
 app.use(cors())
 app.use(express.static('public'))
@@ -26,7 +30,7 @@ app.use(express.json());
 //user anlegen
 app.post("/api/users", (req,res) => {
   const userName = req.body.username;
-  const newUserId = userIdCounter++;
+  const newUserId = setUserId();
 
   const newUser = {
     _id: newUserId,
@@ -40,35 +44,40 @@ app.post("/api/users", (req,res) => {
 
 // userspezifische übung anlegen, hinzufügen
 app.post("/api/users/:_id/exercises", (req, res) => {
-
   const userId = req.params._id;
   const excDescr = req.body.description;
-  const excDur = req.body.duration;
-  let excDate = req.body.date;
+  let excDur = req.body.duration;
+  let excDate = req.body.date || new Date();
 
-  if(req.body.date == ""){
-    excDate = new Date();
-  }
 
-  for(let i = 0; i < users.length; i++){
+  parseInt(userId);
+  excDur = Number(excDur);
+  excDate = new Date(excDate).toDateString();
 
-    if(users[i]._id == userId){
-      if (!users[i].exercises) {
-        users[i].exercises = []; 
-      }
-
-      users[i].exercises.push({
-        description: excDescr,
-        duration: excDur,
-        date: excDate
-      });
-
-      return res.json(users[i]);
+  const user = users.find(user => user._id == userId);
+  
+  if (user) {
+    if (!user.exercises) {
+      user.exercises = [];
     }
-  }
 
-  res.json({ error: "User not found" });
+    const newExercise = {
+      _id: userId,
+      username: user.name,
+      date: excDate,
+      duration: excDur,
+      description: excDescr
+    };
+
+    user.exercises.push(newExercise);
+
+    res.json(newExercise);
+  } else {
+    res.json({ error: "User not found" });
+  }
 });
+
+
 
 // logs anzeigen
 app.get("/api/users/:_id/logs", (req, res) => {
@@ -100,6 +109,11 @@ app.get("/api/users/:_id/logs", (req, res) => {
   if(limit) {
     logs = logs.slice(0, parseInt(limit));
   }
+
+  logs = logs.map(log => ({
+    ...log,
+    duration: Number(log.duration)
+  }));
 
   //ausgeben der ergebnisse
 
@@ -135,13 +149,11 @@ app.get("/api/users", (req,res) =>{
     res.status(404).json({ error: "User not found" });
   }
 
-  const userArray = [];
-  for (let i = 0; i < users.length; i++) {
-    userArray.push({
-      "username": users[i].name,
-      "_id": users[i]._id
-    });
-  }
+  const userArray = users.map(user => ({
+    username: user.name,
+    _id: user._id.toString()
+  }));
+
   console.log(userArray);
   res.json(userArray);
 
