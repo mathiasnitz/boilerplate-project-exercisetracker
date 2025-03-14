@@ -125,7 +125,14 @@ app.get("/api/users/:_id", (req,res) =>{
 
 // alle user anzeigen
 app.get("/api/users", (req,res) =>{
-  res.json(users);
+  
+  const userList = users.map(user => ({
+    username: user.name,
+    _id: user._id
+  }));
+  
+  res.json(userList);
+
 });
 
 
